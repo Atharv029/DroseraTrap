@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./interfaces/ITrap.sol";
+import "./PriceConfig.sol";
+import "./PriceMock.sol";
+import "./TrapRegistry.sol";
+
+contract PriceDeviationTrap is ITrap {
+    TrapRegistry public immutable trapRegistry;
+    
+    constructor(address _trapRegistry) {
+        trapRegistry = TrapRegistry(_trapRegistry);
+    }
+    
+    function collect() external view returns (bytes memory) {
+        address priceConfigAddr = trapRegistry.priceConfigAddress();
+        address priceMockAddr = trapRegistry.priceMockAddress();
+        
+        require(priceConfigAddr != address(0), "PriceConfig not set");
+        require(priceMockAddr != address(0), "PriceMock not set");
+        
+        PriceConfig config = PriceConfig(priceConfigAddr);
+        PriceMock priceMock = PriceMock(priceMockAddr);
+        
+        uint256 currentPrice = priceMock.getPrice();
+        uint256 deviationThreshold = config.deviationThreshold();
+        uint256 baselinePrice = config.baselinePrice();
+        
+        return abi.encode(currentPrice, deviationThreshold, baselinePrice);
+    }
+    
+    function shouldRespond(bytes memory collectOutputs) external pure returns (bool, bytes memory) {
+        (uint256 currentPrice, uint256 deviationThreshold, uint256 baselinePrice) = 
+            abi.decode(collectOutputs, (uint256, uint256, uint256));
+        
+        uint256 deviation;
+        if (currentPrice > baselinePrice) {
+            deviation = currentPrice - baselinePrice;
+        } else {
+            deviation = baselinePrice - currentPrice;
+        }
+        
+        uint256 deviationPercentage = (deviation * 100) / baselinePrice;
+        
+        if (deviationPercentage >= deviationThreshold) {
+            string memory message = string(abi.encodePacked(
+                "Price deviation detected: ",
+                _uint2str(deviationPercentage),
+                "% from baseline"
+            ));
+            return (true, abi.encode(message));
+        }
+        
+        return (false, "");
+    }
+    
+    function _uint2str(uint256 _i) internal pure returns (string memory) {
+        if (_i == 0) return "0";
+        uint256 j = _i;
+        uint256 len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len;
+        while (_i != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        return string(bstr);
+    }
+}

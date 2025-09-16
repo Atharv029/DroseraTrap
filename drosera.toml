@@ -1,0 +1,19 @@
+ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
+drosera_rpc = "https://relay.hoodi.drosera.io"
+eth_chain_id = 560048
+drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
+
+[traps.price_deviation_trap]
+name = "Price Deviation Trap"
+description = "Monitors price for significant deviations from baseline."
+path = "out/PriceDeviationTrap.sol/PriceDeviationTrap.json"
+response_contract = "0xE03d8985311b4b4aeD9684d9a465f07BD6bdf64F"
+response_function = "handlePriceDeviation(string)"
+cooldown_period_blocks = 33
+min_number_of_operators = 1
+max_number_of_operators = 2
+block_sample_size = 100
+private_trap = true
+whitelist = ["0xc731a8D7bef11c92F6396ab6B448c70329c46759"]
+address = "0x899989d5f00c6184091D59E1539e23301d01B0e2"
+

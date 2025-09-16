@@ -1,0 +1,7 @@
+{
+  "trapRegistry": "0x59891e755d0dc2F6f9C66F2e49c50DC7c810072e",
+  "priceConfig": "0xfcBf523D84d98A200eA33c43aDC9a5f7D52b81AE",
+  "priceMock": "0x310371F67e971427330D024aEf12F066710e220c",
+  "priceDeviationTrap": "0x0456cBF03b4037627d56FE2BA63043a6360bac3d",
+  "responseContract": "0xE03d8985311b4b4aeD9684d9a465f07BD6bdf64F"
+}
