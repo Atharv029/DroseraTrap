@@ -12,14 +12,14 @@ async function test() {
     try {
         const balance = await provider.getBalance(wallet.address);
         console.log("Balance:", ethers.formatEther(balance), "ETH");
-        console.log("✅ Connection successful!");
+        console.log(" Connection successful!");
         
         // Check if you have enough funds
         if (balance < ethers.parseEther("0.001")) {
-            console.log("⚠️  Need more ETH from faucet: https://hoodi-faucet.pk910.de");
+            console.log("  Need more ETH from faucet: https://hoodi-faucet.pk910.de");
         }
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error(" Error:", error.message);
     }
 }
 
